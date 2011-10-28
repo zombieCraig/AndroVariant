@@ -56,7 +56,7 @@ end
     require plugin
     class_name = File.basename(plugin).gsub(/\.rb$/, '')
     time(class_name) do
-      p = eval(class_name).new(@dex)
+      p = eval(class_name).new(@dex, @dasm)
       p.load_config
       p.analyze
       p.report

@@ -1,0 +1,4 @@
+--- 
+:verbose: false
+:threshold: 2
+:min_size: 4

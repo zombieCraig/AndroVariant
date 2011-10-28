@@ -1,10 +1,11 @@
 # Base class plugin
 
 class AndroVPlugin
-attr_accessor :dex
+attr_accessor :dex, :dasm
 
-  def initialize(dex)
+  def initialize(dex, dasm)
     @dex = dex
+    @dasm = dasm
   end
 
   # Loads any config settings and definitions
