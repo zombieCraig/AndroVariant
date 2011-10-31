@@ -1,5 +1,7 @@
 # Base class plugin
 
+require 'VariantData'
+
 class AndroVPlugin
 attr_accessor :dex, :dasm
 

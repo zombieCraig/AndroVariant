@@ -9,10 +9,6 @@ require 'yaml'
 require 'rubygems'
 require 'text/levenshtein'
 
-class VariantData
-  attr_accessor :match, :match_on, :distance, :variant, :hits, :exact_matches
-end
-
 class SpellCheckerPlugin < AndroVPlugin
 
   def load_config
@@ -23,26 +19,20 @@ class SpellCheckerPlugin < AndroVPlugin
   end
 
   def check_distance(str)
-    @sigs.each do |sig, variant|
-      distance = Text::Levenshtein.distance(str, sig)
-      if distance < @settings[:threshold] then
-        puts "Found match: #{distance} #{str} =~ #{sig}" if @settings[:verbose]
-        if @matches[variant] then
-          @matches[variant].hits += 1
-          @matches[variant].exact_matches += 1 if distance == 0
-        else
-          newVariant =  VariantData.new
-          newVariant.match = str
-          newVariant.match_on = sig
-          newVariant.distance = distance
-          newVariant.variant = variant
-          newVariant.hits = 1
-          if distance == 0 then
-            newVariant.exact_matches = 1
-          else
-            newVariant.exact_matches = 0
+    @sigs.each do |variant, variantdata|
+      variantdata.each do |sig|
+        if sig.sig_type = "str" then
+          distance = Text::Levenshtein.distance(str, sig.sig_data)
+          if distance < @settings[:threshold] then
+            puts "Found match: #{distance} #{str} =~ #{sig.sig_data}" if @settings[:verbose]
+            sig.match = str
+            sig.distance = distance
+            sig.hits ? sig.hits += 1 : sig.hits = 1
+            if distance = 0 then
+              sig.exact_matches ? sig.exact_matches += 1 : sig.exact_matches = 1
+            end
+            @matches[variant] ? @matches[variant] += 1 : @matches[variant] = 1
           end
-          @matches[variant] = newVariant # We only one one per variant
         end
       end
     end
@@ -67,15 +57,17 @@ class SpellCheckerPlugin < AndroVPlugin
     puts "Results from SpellCheckerPlugin"
     puts "  Number of Strings:      #{@dex.strings.count}"
     if @matches.size > 0 then
-      @matches.each do |variant, match|
-        if match.exact_matches == match.hits then
-          puts "  Exact Match: #{variant} - Hits: #{match.hits} exact matches: #{match.exact_matches}"
-        else
-          puts "  Variant Match: #{variant} - Hits: #{match.hits} exact matches: #{match.exact_matches}"
+      @matches.each do |variant, hits|
+        puts "  Found variant #{variant}"
+        @sigs[variant].each do |v|
+          v.hits = 0 if not v.hits
+          v.exact_matches = 0 if not v.exact_matches
+          puts "    #{v.sig_data} found #{v.hits} expected #{v.expected_hits} exact matches #{v.exact_matches}"
         end
       end
     else
       puts "  No string constants breached nearest signature thresholds"
     end
+    return @sigs
   end
 end

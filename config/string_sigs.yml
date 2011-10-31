@@ -1,4 +1,13 @@
 --- 
-"lightdd": DroidDream
-"leeeeeeeeeeeeeeeeeeength": DroidDream
+DroidDream:
+- !ruby/object:VariantData 
+  expected_hits: 1
+  sig_data: "leeeeeeeeeeeeeeeeeeength"
+  sig_type: str
+  variant: DroidDream
+- !ruby/object:VariantData 
+  expected_hits: 20
+  sig_data: "lightdd"
+  sig_type: str
+  variant: DroidDream
 
